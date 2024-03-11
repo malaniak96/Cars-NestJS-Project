@@ -1,43 +1,55 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './services/auth.service';
 
-@Controller('auth')
+import { SignUpRequestDto } from './dto/request/sign-up.request.dto';
+
+import { SignInRequestDto } from './dto/request/sign-in.request.dto';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { TokenResponseDto } from './dto/response/token.response';
+import { AuthUserResponseDto } from './dto/response/auth-user.response.dto';
+import { IUser } from '../../interfaces/user.interface';
+import { SkipAuth } from './decorators/skip-auth.decorator';
+
+@ApiTags('Auth')
+@Controller({ path: 'auth', version: '1' })
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @SkipAuth()
+  @ApiOperation({ summary: 'Registration' })
+  @Post('sign-up')
+  public async signUp(
+    @Body() dto: SignUpRequestDto,
+  ): Promise<AuthUserResponseDto> {
+    return await this.authService.signUp(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @SkipAuth()
+  @ApiOperation({ summary: 'Login' })
+  @Post('sign-in')
+  public async signIn(
+    @Body() dto: SignInRequestDto,
+  ): Promise<AuthUserResponseDto> {
+    return await this.authService.signIn(dto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Logout' })
+  @Post('logout')
+  public async logout(@CurrentUser() userData: IUser): Promise<void> {
+    await this.authService.logout(userData);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @SkipAuth()
+  @ApiBearerAuth()
+  @UseGuards(JwtRefreshGuard)
+  @ApiOperation({ summary: 'Update token pair' })
+  @Post('refresh')
+  public async updateRefreshToken(
+    @CurrentUser() userData: IUser,
+  ): Promise<TokenResponseDto> {
+    return await this.authService.refreshToken(userData);
   }
 }

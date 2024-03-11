@@ -1,14 +1,10 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
-  Post,
   UseGuards,
 } from '@nestjs/common';
 
@@ -19,12 +15,11 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IUser } from '../../interfaces/user.interface';
 import { UserResponseDto } from './dto/response/user.response.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { UserCreateRequestDto } from './dto/request/create-user.request.dto';
 import { ERole } from '../../common/enums/role.enum';
 import { RoleGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles';
+import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 
-@ApiBearerAuth()
 @ApiTags('Users')
 @Roles(ERole.ADMIN)
 @UseGuards(RoleGuard)
@@ -32,26 +27,26 @@ import { Roles } from '../../common/decorators/roles';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // @Roles(ERole.BUYER, ERole.SELLER)
+  // @SkipAuth()
+  // @ApiOperation({ summary: 'Create new user' })
+  // @Post()
+  // public async create(
+  //   @Body() dto: UserCreateRequestDto,
+  // ): Promise<UserResponseDto> {
+  //   return await this.userService.create(dto);
+  // }
   @Roles(ERole.BUYER, ERole.SELLER)
-  @ApiOperation({ summary: 'Create new user' })
-  @ApiBearerAuth()
-  @Post()
-  async createUser(
-    @Body() dto: UserCreateRequestDto,
-  ): Promise<UserResponseDto> {
-    return await this.userService.createUser(dto);
-  }
-
-  @Roles(ERole.BUYER, ERole.SELLER)
+  @SkipAuth()
   @ApiOperation({ summary: 'Find all users' })
   @Get()
   public async findAllUsers(): Promise<UserResponseDto[]> {
     return await this.userService.findAllUsers();
   }
 
+  @ApiBearerAuth()
   @Roles(ERole.BUYER, ERole.SELLER)
   @ApiOperation({ summary: 'Update user' })
-  @ApiBearerAuth()
   @Patch(':userId')
   public async updateUser(
     @CurrentUser() userData: IUser,
@@ -60,6 +55,7 @@ export class UserController {
     return await this.userService.updateUser(userData, dto);
   }
 
+  @ApiBearerAuth()
   @Roles(ERole.BUYER, ERole.SELLER)
   @ApiOperation({ summary: 'Get user by Id' })
   @Get(':userId')
@@ -69,11 +65,12 @@ export class UserController {
     return await this.userService.getUserById(userId);
   }
 
-  @Roles(ERole.BUYER, ERole.SELLER)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete user by Id' })
-  @Delete(':userId')
-  async delete(@Param('userId') userId: string): Promise<void> {
-    await this.userService.deleteUser(userId);
-  }
+  // @ApiBearerAuth()
+  // @Roles(ERole.BUYER, ERole.SELLER)
+  // // @HttpCode(HttpStatus.NO_CONTENT)
+  // @ApiOperation({ summary: 'Delete user by Id' })
+  // @Delete(':userId')
+  // async delete(@Param('userId') userId: string): Promise<void> {
+  //   await this.userService.deleteUser(userId);
+  // }
 }

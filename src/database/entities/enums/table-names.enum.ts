@@ -4,4 +4,5 @@ export enum TableNameEnum {
   ADMIN = 'admin',
   MANAGER = 'manager',
   CAR = 'car',
+  REFRESH_TOKEN = 'refresh-token',
 }

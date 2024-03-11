@@ -7,8 +7,4 @@ export class UserRepository extends Repository<UserEntity> {
   constructor(private readonly dataSource: DataSource) {
     super(UserEntity, dataSource.manager);
   }
-
-  public async method() {
-    return await this.find();
-  }
 }

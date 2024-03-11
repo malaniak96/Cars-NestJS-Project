@@ -2,7 +2,7 @@ export type Config = {
   app: AppConfig;
   postgres: PostgresConfig;
   redis: RedisConfig;
-  // jwt: JWTConfig;
+  jwt: JWTConfig;
 };
 
 export type AppConfig = {
@@ -22,9 +22,9 @@ export type RedisConfig = {
   password: string;
 };
 
-// export type JWTConfig = {
-//   accessTokenSecret: string;
-//   accessTokenExpiration: number;
-//   refreshTokenSecret: string;
-//   refreshTokenExpiration: number;
-// };
+export type JWTConfig = {
+  accessTokenSecret: string;
+  accessTokenExpiration: number;
+  refreshTokenSecret: string;
+  refreshTokenExpiration: number;
+};

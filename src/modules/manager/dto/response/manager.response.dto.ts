@@ -1,7 +1,7 @@
-import { EAccountTypes } from '../../enums/account-types.enum';
 import { ERole } from '../../../../common/enums/role.enum';
+import { EAccountTypes } from '../../../user/enums/account-types.enum';
 
-export class UserResponseDto {
+export class ManagerResponseDto {
   id: string;
   name: string;
   userName: string;

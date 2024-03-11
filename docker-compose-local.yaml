@@ -6,11 +6,11 @@ services:
     ports:
       - '${POSTGRES_PORT}:5433'
     environment:
-      POSTGRES_USER: '${POSTGRES_USER:-user}'
-      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD:-pass}'
-      POSTGRES_DB: '${POSTGRES_DB:-nestjs_cars}'
+      POSTGRES_USER: '${POSTGRES_USER:-postgres}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD:-chaircool}'
+      POSTGRES_DB: '${POSTGRES_DB:-cars}'
     volumes:
-      - june-2023-api-db:/var/lib/postgresql/nestjs_cars
+      - june-2023-api-db:/var/lib/postgresql/cars
 
   nestjs-cars-redis:
     image: redis:7.2.3

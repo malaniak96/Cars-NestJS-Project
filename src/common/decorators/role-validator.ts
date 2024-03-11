@@ -6,5 +6,5 @@ export function IsPermittedRole(validationOptions?: ValidationOptions) {
 }
 
 export function IsPermittedRoleAdmin(validationOptions?: ValidationOptions) {
-  return IsIn([ERole.MANAGER, ERole.ADMIN, ERole.DEALER], validationOptions);
+  return IsIn([ERole.MANAGER, ERole.ADMIN], validationOptions);
 }

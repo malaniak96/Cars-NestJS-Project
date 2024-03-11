@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateManagerDto } from '../dto/create-manager.dto';
-import { UpdateManagerDto } from '../dto/update-manager.dto';
+import { CreateManagerRequestDto } from '../dto/request/create-manager.request.dto';
 
 @Injectable()
 export class ManagerService {
-  create(createManagerDto: CreateManagerDto) {
+  create(createManagerDto: CreateManagerRequestDto) {
     return 'This action adds a new manager';
   }
 
@@ -16,9 +15,9 @@ export class ManagerService {
     return `This action returns a #${id} manager`;
   }
 
-  update(id: number, updateManagerDto: UpdateManagerDto) {
-    return `This action updates a #${id} manager`;
-  }
+  // update(id: number, updateManagerDto: UpdateManagerDto) {
+  //   return `This action updates a #${id} manager`;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} manager`;

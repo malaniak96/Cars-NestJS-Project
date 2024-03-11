@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { BaseEntity } from './models/base.entity';
 import { TableNameEnum } from './enums/table-names.enum';
@@ -18,8 +18,14 @@ export class CarEntity extends BaseEntity {
   price: number;
 
   @Column({ type: 'text' })
+  currency: string;
+
+  @Column({ type: 'text' })
   description: number;
 
+  @Column()
+  user_id: string;
   @ManyToOne(() => UserEntity, (entity) => entity.cars)
-  user: UserEntity;
+  @JoinColumn({ name: 'user_id' })
+  user?: UserEntity;
 }

@@ -7,8 +7,8 @@ import { EAccountTypes } from '../../modules/user/enums/account-types.enum';
 import { ERole } from '../../common/enums/role.enum';
 import { RefreshTokenEntity } from './refresh.token.entity';
 
-@Entity(TableNameEnum.MANAGER)
-export class ManagerEntity extends BaseEntity {
+@Entity(TableNameEnum.ADMIN)
+export class AdminEntity extends BaseEntity {
   @Column('text')
   name: string;
 
@@ -21,8 +21,8 @@ export class ManagerEntity extends BaseEntity {
   @Column('text')
   password: string;
 
-  @Column({ type: 'enum', enum: ERole.MANAGER })
-  role: ERole;
+  @Column({ type: 'enum', enum: ERole.ADMIN })
+  role: ERole.ADMIN;
 
   @Column({ type: 'enum', enum: EAccountTypes, default: EAccountTypes.BASIC })
   typeAccount: EAccountTypes;
