@@ -10,4 +10,5 @@ export class UserResponseDto {
   typeAccount: EAccountTypes;
   created: Date;
   updated: Date;
+  blocked: boolean;
 }

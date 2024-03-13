@@ -1,18 +1,26 @@
 import { Transform, Type } from 'class-transformer';
-import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
 import { ERole } from '../../../../common/enums/role.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsRoleBuyerORSeller } from '../../../../common/decorators/role-validator';
 
 export class UserBaseRequestDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Length(3, 50)
   @Transform(TransformHelper.trim)
   @Type(() => String)
-  name: string;
+  name?: string;
 
   @IsString()
+  @IsNotEmpty()
   @Length(3, 50)
   @Transform(TransformHelper.trim)
   @Type(() => String)
@@ -28,7 +36,7 @@ export class UserBaseRequestDto {
 
   @IsString()
   @IsNotEmpty()
-  @Transform(TransformHelper.trim)
+  @Transform(TransformHelper.trimPassword)
   @ApiProperty({ example: 'okten24@' })
   @Length(0, 30)
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%_*#?&])[A-Za-z\d@$_!%*#?&]{8,}$/)
@@ -37,6 +45,6 @@ export class UserBaseRequestDto {
   @Transform(TransformHelper.trim)
   @IsString()
   @IsNotEmpty()
-  // @IsPermittedRole()
+  @IsRoleBuyerORSeller()
   role: ERole;
 }

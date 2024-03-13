@@ -1,15 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { UserRepository } from './services/user.repository';
 import { RefreshTokenRepository } from './services/refresh-token.repository';
-import { AdminRepository } from './services/admin.repository';
-import { ManagerRepository } from './services/manager.repository';
+import { CarRepository } from './services/car.repository';
 
-const repositories = [
-  UserRepository,
-  RefreshTokenRepository,
-  AdminRepository,
-  ManagerRepository,
-];
+const repositories = [UserRepository, RefreshTokenRepository, CarRepository];
 
 @Global()
 @Module({

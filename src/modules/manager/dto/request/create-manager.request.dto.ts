@@ -1,17 +1,23 @@
 import { Transform, Type } from 'class-transformer';
-import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
 import { ERole } from '../../../../common/enums/role.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsPermittedRoleAdmin } from '../../../../common/decorators/role-validator';
+import { IsdRoleAdminORManager } from '../../../../common/decorators/role-validator';
 
 export class CreateManagerRequestDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Length(3, 50)
   @Transform(TransformHelper.trim)
   @Type(() => String)
-  name: string;
+  name?: string;
 
   @Transform(TransformHelper.trim)
   @Length(3, 50)
@@ -26,7 +32,7 @@ export class CreateManagerRequestDto {
   @IsNotEmpty()
   email: string;
 
-  @Transform(TransformHelper.trim)
+  @Transform(TransformHelper.trimPassword)
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: 'okten243@' })
@@ -36,6 +42,10 @@ export class CreateManagerRequestDto {
 
   @Transform(TransformHelper.trim)
   @IsString()
-  @IsPermittedRoleAdmin()
+  @IsdRoleAdminORManager()
   role: ERole;
+
+  @IsNotEmpty()
+  @IsString()
+  deviceId: string;
 }

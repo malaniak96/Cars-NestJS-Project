@@ -12,8 +12,6 @@ import { UserRepository } from '../../repositories/services/user.repository';
 import { SignUpRequestDto } from '../dto/request/sign-up.request.dto';
 import { SignInRequestDto } from '../dto/request/sign-in.request.dto';
 import { TokenResponseDto } from '../dto/response/token.response';
-import { UserService } from '../../user/services/user.service';
-
 import { AuthUserResponseDto } from '../dto/response/auth-user.response.dto';
 import { IUser } from '../../../interfaces/user.interface';
 import { RefreshTokenRepository } from '../../repositories/services/refresh-token.repository';
@@ -22,7 +20,6 @@ import { RefreshTokenRepository } from '../../repositories/services/refresh-toke
 export class AuthService {
   salt = 10;
   constructor(
-    private readonly userService: UserService,
     private readonly tokenService: TokenService,
     private readonly authCacheService: AuthCacheService,
     private readonly userRepository: UserRepository,
@@ -64,25 +61,15 @@ export class AuthService {
     return AuthMapper.toResponseDto(user, tokens);
   }
 
-  // public async registerManager(dto: CreateAdminRequestDto): Promise<any> {
-  //   dto.password = await bcrypt.hash(dto.password, this.salt);
-  //   return await this.userService.create(dto);
-  // }
-  //
-  // public async deleteManager(dto: CreateAdminRequestDto): Promise<void> {
-  //   dto.password = await bcrypt.hash(dto.password, this.salt);
-  //   return await this.userService.deleteUser(dto);
-  // }
-
   public async signIn(dto: SignInRequestDto): Promise<AuthUserResponseDto> {
     const userEntity = await this.userRepository.findOne({
       where: { email: dto.email },
       select: { id: true, password: true },
     });
-    if (!userEntity) {
-      throw new UnauthorizedException('User password or email doesnt match');
-    }
 
+    if (!userEntity) {
+      throw new UnauthorizedException('User not found');
+    }
     const isPasswordsMatch = await bcrypt.compare(
       dto.password,
       userEntity.password,

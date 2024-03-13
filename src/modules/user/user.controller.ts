@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -16,13 +17,10 @@ import { IUser } from '../../interfaces/user.interface';
 import { UserResponseDto } from './dto/response/user.response.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ERole } from '../../common/enums/role.enum';
-import { RoleGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 
 @ApiTags('Users')
-@Roles(ERole.ADMIN)
-@UseGuards(RoleGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -36,7 +34,6 @@ export class UserController {
   // ): Promise<UserResponseDto> {
   //   return await this.userService.create(dto);
   // }
-  @Roles(ERole.BUYER, ERole.SELLER)
   @SkipAuth()
   @ApiOperation({ summary: 'Find all users' })
   @Get()
@@ -45,7 +42,8 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Roles(ERole.BUYER, ERole.SELLER)
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER, ERole.ADMIN, ERole.MANAGER)
+  // @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Update user' })
   @Patch(':userId')
   public async updateUser(
@@ -56,7 +54,8 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Roles(ERole.BUYER, ERole.SELLER)
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER, ERole.MANAGER, ERole.ADMIN)
+  // @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Get user by Id' })
   @Get(':userId')
   public async getUserById(
@@ -65,12 +64,14 @@ export class UserController {
     return await this.userService.getUserById(userId);
   }
 
-  // @ApiBearerAuth()
-  // @Roles(ERole.BUYER, ERole.SELLER)
-  // // @HttpCode(HttpStatus.NO_CONTENT)
-  // @ApiOperation({ summary: 'Delete user by Id' })
-  // @Delete(':userId')
-  // async delete(@Param('userId') userId: string): Promise<void> {
-  //   await this.userService.deleteUser(userId);
-  // }
+  @ApiBearerAuth()
+  // @UseGuards(RoleGuard)
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER, ERole.MANAGER, ERole.ADMIN)
+  @ApiOperation({ summary: 'Delete user by Id' })
+  @Delete(':userId')
+  public async delete(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<void> {
+    return await this.userService.deleteUser(userId);
+  }
 }

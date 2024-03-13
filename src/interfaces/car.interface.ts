@@ -1,11 +1,13 @@
+import { ECurrency } from '../modules/car/enums/currency.enum';
+
 export class ICar {
   id: string;
   year: number;
-  EUR: number;
-  USD: number;
-  UAH: number;
-  currency: string;
-  description: string;
+  price: number;
   model: { model: string };
   brand: { brand: string };
+  currency: ECurrency;
+  description: string;
+  photo: string;
+  status: string;
 }

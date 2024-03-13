@@ -8,6 +8,9 @@ import { ConfigService } from '@nestjs/config';
 import { AppConfig, Config } from './configs/configs.type';
 import { AppModule } from './modules/app.module';
 import { SwaggerHelper } from './common/helpers/swagger.helper';
+import { AdminService } from './modules/admin/services/admin.service';
+import { ERole } from './common/enums/role.enum';
+import { EAccountTypes } from './modules/user/enums/account-types.enum';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,8 +35,23 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
-  //
-  // app.useGlobalFilters(new GlobalExceptionFilter());
+
+  const adminService = app.get<AdminService>(AdminService);
+  const admin = {
+    name: '',
+    userName: 'Admin',
+    email: 'admin@car-market.com',
+    password: 'Admin24@!',
+    role: ERole.ADMIN,
+    typeAccount: EAccountTypes.PREMIUM,
+    deviceId: '',
+  };
+  try {
+    await adminService.createAdmin(admin);
+    new Logger().log('ROOT ADMIN was successfully created');
+  } catch (error) {
+    new Logger().error('Failed to create ROOT ADMIN', error);
+  }
 
   app.useGlobalPipes(
     new ValidationPipe({

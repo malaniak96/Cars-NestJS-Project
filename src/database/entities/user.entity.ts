@@ -13,7 +13,7 @@ export class UserEntity extends BaseEntity {
   @Column('text')
   name: string;
 
-  @Column('text')
+  @Column('text', { unique: true })
   userName: string;
 
   @Column('text', { unique: true })
@@ -27,6 +27,9 @@ export class UserEntity extends BaseEntity {
 
   @Column({ type: 'enum', enum: EAccountTypes, default: EAccountTypes.BASIC })
   typeAccount: EAccountTypes;
+
+  @Column({ type: 'boolean', default: false })
+  blocked: boolean;
 
   @OneToMany(() => RefreshTokenEntity, (entity) => entity.user)
   refreshTokens?: RefreshTokenEntity[];

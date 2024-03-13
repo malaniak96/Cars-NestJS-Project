@@ -22,6 +22,6 @@ import { AuthController } from './auth.controller';
     AuthCacheService,
     TokenService,
   ],
-  exports: [AuthCacheService],
+  exports: [AuthCacheService, AuthService],
 })
 export class AuthModule {}

@@ -1,44 +1,29 @@
-import {
-  BadRequestException,
-  Body,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Body, Injectable, UnprocessableEntityException } from '@nestjs/common';
 
-import { AdminRepository } from '../../repositories/services/admin.repository';
-import { ManagerRepository } from '../../repositories/services/manager.repository';
 import { CreateManagerRequestDto } from '../../manager/dto/request/create-manager.request.dto';
-import { ManagerResponseDto } from '../../manager/dto/response/manager.response.dto';
+import { CreateAdminRequestDto } from '../dto/request/create-admin.request.dto';
+import { AuthService } from '../../auth/services/auth.service';
+import { AuthUserResponseDto } from '../../auth/dto/response/auth-user.response.dto';
+import { UserRepository } from '../../repositories/services/user.repository';
+import { UserEntity } from '../../../database/entities/user.entity';
 
 @Injectable()
 export class AdminService {
   constructor(
-    private readonly adminRepository: AdminRepository,
-    private readonly managerRepository: ManagerRepository,
+    private readonly authService: AuthService,
+    private readonly userRepository: UserRepository,
   ) {}
 
-  // public async createAdmin(dto: CreateAdminRequestDto) {
-  //   return await this.adminRepository.register(admin);
-  // }
-
-  // public async createManager(dto: CreateManagerDto): Promise<any> {
-  //   return this.adminRepository.create(dto);
-  // }
+  public async createAdmin(
+    admin: CreateAdminRequestDto,
+  ): Promise<AuthUserResponseDto> {
+    return await this.authService.signUp(admin);
+  }
 
   public async createManager(
     @Body() dto: CreateManagerRequestDto,
-  ): Promise<ManagerResponseDto> {
-    const findManager = await this.managerRepository.findOneBy({
-      email: dto.email,
-    });
-    if (findManager) {
-      throw new BadRequestException('Manager already exists');
-    }
-    const newManager = this.managerRepository.create(dto);
-
-    return await this.managerRepository.save(newManager);
+  ): Promise<AuthUserResponseDto> {
+    return await this.authService.signUp(dto);
   }
 
   // public async createManager(
@@ -55,20 +40,15 @@ export class AdminService {
   // public deleteManager(id: number) {
   //   return `This action removes a #${id} admin`;
   // }
-
-  public async deleteManager(managerId: string): Promise<void> {
-    const managerEntity = await this.findByIdManagerOrThrowException(managerId);
-    await this.managerRepository.remove(managerEntity);
-    throw new HttpException('Manager is deleted', HttpStatus.OK);
+  public async deleteManager(userId: string): Promise<void> {
+    const userEntity = await this.findByIdOrThrowException(userId);
+    await this.userRepository.remove(userEntity);
   }
-
-  public async findByIdManagerOrThrowException(
-    managerId: string,
-  ): Promise<any> {
-    const manager = await this.managerRepository.findOneBy({ id: managerId });
-    if (!manager) {
+  public async findByIdOrThrowException(userId: string): Promise<UserEntity> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
       throw new UnprocessableEntityException();
     }
-    return manager;
+    return user;
   }
 }

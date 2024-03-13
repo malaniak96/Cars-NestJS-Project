@@ -12,6 +12,7 @@ export class UserMapper {
       updated: userEntity.updated,
       typeAccount: userEntity.typeAccount,
       role: userEntity.role,
+      blocked: userEntity.blocked,
     };
   }
 }
