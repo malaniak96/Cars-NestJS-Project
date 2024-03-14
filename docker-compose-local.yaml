@@ -8,9 +8,9 @@ services:
     environment:
       POSTGRES_USER: '${POSTGRES_USER:-postgres}'
       POSTGRES_PASSWORD: '${POSTGRES_PASSWORD:-chaircool}'
-      POSTGRES_DB: '${POSTGRES_DB:-cars}'
+      POSTGRES_DB: '${POSTGRES_DB:-car-market}'
     volumes:
-      - june-2023-api-db:/var/lib/postgresql/cars
+      - june-2023-api-db:/var/lib/postgresql/car-market
 
   nestjs-cars-redis:
     image: redis:7.2.3

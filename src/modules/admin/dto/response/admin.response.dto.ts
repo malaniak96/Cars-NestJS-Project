@@ -1,5 +1,4 @@
 import { ERole } from '../../../../common/enums/role.enum';
-import { EAccountTypes } from '../../../user/enums/account-types.enum';
 
 export class AdminResponseDto {
   id: string;
@@ -7,7 +6,6 @@ export class AdminResponseDto {
   userName: string;
   email: string;
   role: ERole;
-  typeAccount: EAccountTypes;
   created: Date;
   updated: Date;
 }

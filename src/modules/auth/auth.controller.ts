@@ -11,6 +11,8 @@ import { TokenResponseDto } from './dto/response/token.response';
 import { AuthUserResponseDto } from './dto/response/auth-user.response.dto';
 import { IUser } from '../../interfaces/user.interface';
 import { SkipAuth } from './decorators/skip-auth.decorator';
+import { Roles } from '../../common/decorators/roles';
+import { ERole } from '../../common/enums/role.enum';
 
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -18,6 +20,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @SkipAuth()
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER, ERole.ADMIN)
   @ApiOperation({ summary: 'Registration' })
   @Post('sign-up')
   public async signUp(

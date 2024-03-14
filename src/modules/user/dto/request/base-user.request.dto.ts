@@ -14,7 +14,7 @@ import { IsRoleBuyerORSeller } from '../../../../common/decorators/role-validato
 export class UserBaseRequestDto {
   @IsString()
   @IsOptional()
-  @Length(3, 50)
+  @Length(0, 50)
   @Transform(TransformHelper.trim)
   @Type(() => String)
   name?: string;

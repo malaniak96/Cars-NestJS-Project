@@ -14,7 +14,7 @@ import { IsdRoleAdminORManager } from '../../../../common/decorators/role-valida
 export class CreateManagerRequestDto {
   @IsString()
   @IsOptional()
-  @Length(3, 50)
+  @Length(0, 50)
   @Transform(TransformHelper.trim)
   @Type(() => String)
   name?: string;

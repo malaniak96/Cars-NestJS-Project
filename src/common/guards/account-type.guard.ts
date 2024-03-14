@@ -6,15 +6,15 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorators/roles';
-import { ERole } from '../enums/role.enum';
 import { TokenType } from '../../modules/auth/enums/token.enum';
 import { UserRepository } from '../../modules/repositories/services/user.repository';
 import { TokenService } from '../../modules/auth/services/token.service';
 import { AuthCacheService } from '../../modules/auth/services/auth-cache.service';
+import { EAccountTypes } from '../../modules/user/enums/account-types.enum';
+import { typeAccount_KEY } from '../decorators/account-type-premium';
 
 @Injectable()
-export class RoleGuard implements CanActivate {
+export class AccountTypeGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private userRepository: UserRepository,
@@ -23,13 +23,13 @@ export class RoleGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const roles = this.reflector.getAllAndOverride<ERole[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    Logger.log(roles, 'roles');
-    if (!roles) return true;
-    Logger.log(roles, 'roles');
+    const types = this.reflector.getAllAndOverride<EAccountTypes[]>(
+      typeAccount_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+    Logger.log(types, 'types');
+    if (!types) return true;
+    Logger.log(types, 'types');
 
     const request = context.switchToHttp().getRequest();
 
@@ -67,6 +67,6 @@ export class RoleGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    return roles.some((role) => user.role?.includes(role));
+    return types.some((type) => user.typeAccount?.includes(type));
   }
 }

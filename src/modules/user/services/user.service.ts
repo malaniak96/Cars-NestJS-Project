@@ -2,6 +2,9 @@ import {
   BadRequestException,
   Body,
   Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { UserUpdateRequestDto } from '../dto/request/update-user.request.dto';
@@ -11,6 +14,10 @@ import { IUser } from '../../../interfaces/user.interface';
 import { UserResponseDto } from '../dto/response/user.response.dto';
 import { UserMapper } from './user.mapper';
 import { UserCreateRequestDto } from '../dto/request/create-user.request.dto';
+import { EAccountTypes } from '../enums/account-types.enum';
+import { CreditCardRequestDto } from '../dto/request/credit-card.request.dto';
+import * as bcrypt from 'bcrypt';
+import { DeleteUserDto } from '../dto/request/delete-user.request.dto';
 
 @Injectable()
 export class UserService {
@@ -46,16 +53,47 @@ export class UserService {
     const entity = await this.findByIdOrThrowException(userId);
     return UserMapper.toResponseDto(entity);
   }
+  public async delete(userId: string, deleteDto: DeleteUserDto): Promise<void> {
+    const user = await this.findByIdOrThrowException(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
 
-  public async deleteUser(userId: string): Promise<void> {
-    const userEntity = await this.findByIdOrThrowException(userId);
-    await this.userRepository.remove(userEntity);
+    const passwordMatches = await bcrypt.compare(
+      deleteDto.password,
+      user.password,
+    );
+
+    if (!passwordMatches) {
+      throw new UnauthorizedException('Invalid password');
+    }
+
+    await this.userRepository.remove(user);
+
+    new Logger().log(`User with id: ${userId} has been successfully deleted`);
   }
+
   public async findByIdOrThrowException(userId: string): Promise<UserEntity> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
-      throw new UnprocessableEntityException();
+      throw new UnprocessableEntityException(
+        `User with ID: ${userId} was not found`,
+      );
     }
     return user;
+  }
+
+  public async upgradeToPremium(
+    user: IUser,
+    creditCardInfo: CreditCardRequestDto,
+  ): Promise<void> {
+    if (!creditCardInfo) {
+      throw new UnprocessableEntityException(
+        'Please enter your credit card information to upgrade to premium account',
+      );
+    }
+    user.creditCardInfo = creditCardInfo;
+    user.typeAccount = EAccountTypes.PREMIUM;
+    await this.userRepository.save(user);
   }
 }

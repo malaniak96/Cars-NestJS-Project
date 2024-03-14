@@ -4,7 +4,7 @@ import { RedisService } from './redis.service';
 import { Module } from '@nestjs/common';
 import { Config, RedisConfig } from '../../configs/configs.type';
 
-const redisProvider = {
+export const redisProvider = {
   provide: 'REDIS_PROVIDER',
   useFactory: (configService: ConfigService<Config>) => {
     const redisConfig = configService.get<RedisConfig>('redis');
@@ -21,6 +21,6 @@ const redisProvider = {
   imports: [],
   controllers: [],
   providers: [redisProvider, RedisService],
-  exports: [RedisService],
+  exports: [RedisService, redisProvider],
 })
 export class RedisModule {}

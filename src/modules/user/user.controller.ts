@@ -6,21 +6,27 @@ import {
   Param,
   ParseUUIDPipe,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 
 import { UserService } from './services/user.service';
 import { UserUpdateRequestDto } from './dto/request/update-user.request.dto';
 
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IUser } from '../../interfaces/user.interface';
 import { UserResponseDto } from './dto/response/user.response.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ERole } from '../../common/enums/role.enum';
 import { Roles } from '../../common/decorators/roles';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
+import { RoleGuard } from '../../common/guards/roles.guard';
+import { CreditCardRequestDto } from './dto/request/credit-card.request.dto';
+import { DeleteUserDto } from './dto/request/delete-user.request.dto';
 
 @ApiTags('Users')
+@Roles(ERole.ADMIN, ERole.DEALER)
+@UseGuards(RoleGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -42,8 +48,8 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER, ERole.ADMIN, ERole.MANAGER)
-  // @UseGuards(RoleGuard)
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER)
+  @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Update user' })
   @Patch(':userId')
   public async updateUser(
@@ -54,8 +60,8 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER, ERole.MANAGER, ERole.ADMIN)
-  // @UseGuards(RoleGuard)
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER)
+  @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Get user by Id' })
   @Get(':userId')
   public async getUserById(
@@ -65,13 +71,26 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  // @UseGuards(RoleGuard)
-  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER, ERole.MANAGER, ERole.ADMIN)
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER)
+  @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Delete user by Id' })
   @Delete(':userId')
   public async delete(
     @Param('userId', ParseUUIDPipe) userId: string,
+    @Body() deleteDto: DeleteUserDto,
   ): Promise<void> {
-    return await this.userService.deleteUser(userId);
+    return await this.userService.delete(userId, deleteDto);
+  }
+
+  @ApiBearerAuth()
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER)
+  @ApiOperation({ summary: 'Upgrade Account Type from Basic to Premium' })
+  @ApiBody({ required: true, type: CreditCardRequestDto })
+  @Post('upgrade-to-premium')
+  async upgradeToPremium(
+    @Body() user: IUser,
+    creditCardInfo: CreditCardRequestDto,
+  ): Promise<void> {
+    return await this.userService.upgradeToPremium(user, creditCardInfo);
   }
 }

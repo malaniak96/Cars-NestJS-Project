@@ -8,6 +8,7 @@ import {
   Put,
   HttpStatus,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ManagerService } from './services/manager.service';
@@ -15,11 +16,13 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles';
 import { ERole } from '../../common/enums/role.enum';
 import { CarResponseDto } from '../car/dto/response/car.response.dto';
+import { UserResponseDto } from '../user/dto/response/user.response.dto';
+import { RoleGuard } from '../../common/guards/roles.guard';
 
 @ApiBearerAuth()
-@ApiTags('Manager')
 @Roles(ERole.MANAGER, ERole.ADMIN)
-// @UseGuards(RoleGuard)
+@UseGuards(RoleGuard)
+@ApiTags('Manager')
 @Controller('manager')
 export class ManagerController {
   constructor(private readonly managerService: ManagerService) {}
@@ -34,11 +37,20 @@ export class ManagerController {
 
   @ApiOperation({ summary: 'Block user' })
   @Patch(':userId')
-  async blockUser(
-    @Param('userId', ParseUUIDPipe)
-    userId: string,
+  public async blockUser(
+    @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<void> {
-    await this.managerService.blockUser(userId);
+    return await this.managerService.blockUser(userId);
+  }
+
+  @ApiOperation({
+    summary: 'Get user by id with status blocked',
+  })
+  @Get(':userId')
+  async getUserWithStatusBlocked(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<UserResponseDto> {
+    return await this.managerService.getUserWithStatusBlocked(userId);
   }
 
   @ApiOperation({ summary: 'Unblock user' })
@@ -48,6 +60,7 @@ export class ManagerController {
   ): Promise<void> {
     await this.managerService.unblockUser(userId);
   }
+
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete user by id' })
   @Delete(':userId')
