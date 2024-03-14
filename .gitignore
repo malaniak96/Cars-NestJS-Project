@@ -3,7 +3,7 @@
 /node_modules
 /build
 nest-js.iml
-.idea
+/.idea
 
 # Logs
 logs
@@ -22,7 +22,6 @@ lerna-debug.log*
 /.nyc_output
 
 # IDEs and editors
-/.idea
 .project
 .classpath
 .c9/
