@@ -15,6 +15,7 @@ import { TokenResponseDto } from '../dto/response/token.response';
 import { AuthUserResponseDto } from '../dto/response/auth-user.response.dto';
 import { IUser } from '../../../interfaces/user.interface';
 import { RefreshTokenRepository } from '../../repositories/services/refresh-token.repository';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,7 @@ export class AuthService {
     private readonly authCacheService: AuthCacheService,
     private readonly userRepository: UserRepository,
     private readonly refreshRepository: RefreshTokenRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   public async signUp(dto: SignUpRequestDto): Promise<AuthUserResponseDto> {

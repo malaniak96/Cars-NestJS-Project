@@ -1,6 +1,7 @@
 export class AdvertisementService {
   constructor() {}
 
+  public async createAdvertisement(): Promise<void> {}
   public async getViewsOfAdvertisement(): Promise<void> {}
 
   public async getAveragePriceForCarByRegion(): Promise<void> {}

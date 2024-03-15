@@ -6,7 +6,6 @@ import {
   Param,
   ParseUUIDPipe,
   Patch,
-  Post,
   UseGuards,
 } from '@nestjs/common';
 
@@ -21,11 +20,11 @@ import { ERole } from '../../common/enums/role.enum';
 import { Roles } from '../../common/decorators/roles';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import { RoleGuard } from '../../common/guards/roles.guard';
-import { CreditCardRequestDto } from './dto/request/credit-card.request.dto';
 import { DeleteUserDto } from './dto/request/delete-user.request.dto';
+import { AccountTypeChangeRequestDto } from './dto/request/account-type-change.request.dto';
 
 @ApiTags('Users')
-@Roles(ERole.ADMIN, ERole.DEALER)
+@Roles(ERole.ADMIN, ERole.MANAGER)
 @UseGuards(RoleGuard)
 @Controller('user')
 export class UserController {
@@ -84,13 +83,13 @@ export class UserController {
 
   @ApiBearerAuth()
   @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER)
+  @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Upgrade Account Type from Basic to Premium' })
-  @ApiBody({ required: true, type: CreditCardRequestDto })
-  @Post('upgrade-to-premium')
-  async upgradeToPremium(
-    @Body() user: IUser,
-    creditCardInfo: CreditCardRequestDto,
-  ): Promise<void> {
-    return await this.userService.upgradeToPremium(user, creditCardInfo);
+  @Patch('upgrade-to-premium:userId')
+  public async upgradeToPremium(
+    @CurrentUser() userData: IUser,
+    @Body() dto: AccountTypeChangeRequestDto,
+  ): Promise<UserResponseDto> {
+    return await this.userService.updateUser(userData, dto);
   }
 }

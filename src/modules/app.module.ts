@@ -10,9 +10,11 @@ import { CarModule } from './car/car.module';
 import { AdminModule } from './admin/admin.module';
 import { ManagerModule } from './manager/manager.module';
 import { RepositoryModule } from './repositories/repository.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
     PostgresModule,
     RedisModule,
     ConfigModule.forRoot({

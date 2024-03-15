@@ -3,7 +3,7 @@ import { ECurrency } from '../../enums/currency.enum';
 export class CarResponseDto {
   id: string;
   year: number;
-  brand: string;
+  marka: string;
   model: string;
   price: number;
   currency: ECurrency;

@@ -22,7 +22,7 @@ export class BaseCarRequestDto {
   @IsString()
   @Transform(TransformHelper.trim)
   @Length(2, 30)
-  brand: string;
+  marka: string;
 
   @IsString()
   @Transform(({ value }) => value.trim().toLowerCase())
@@ -38,6 +38,6 @@ export class BaseCarRequestDto {
   @IsString()
   photo: string;
 
-  @IsEnum(ECarStatus)
+  @IsEnum({ type: 'enum', enum: ECarStatus, default: ECarStatus.ACTIVE })
   status: ECarStatus;
 }

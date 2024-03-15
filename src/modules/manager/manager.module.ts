@@ -9,6 +9,7 @@ import { AuthCacheService } from '../auth/services/auth-cache.service';
 import { RedisService } from '../redis/redis.service';
 import { redisProvider } from '../redis/redis.module';
 import { JwtService } from '@nestjs/jwt';
+import { AuthService } from '../auth/services/auth.service';
 
 @Module({
   imports: [],

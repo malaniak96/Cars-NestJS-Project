@@ -6,6 +6,7 @@ import { TokenService } from '../auth/services/token.service';
 import { redisProvider } from '../redis/redis.module';
 import { RedisService } from '../redis/redis.service';
 import { JwtService } from '@nestjs/jwt';
+import { AuthService } from '../auth/services/auth.service';
 
 @Module({
   controllers: [UserController],

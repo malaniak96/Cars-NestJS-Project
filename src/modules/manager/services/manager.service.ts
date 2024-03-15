@@ -21,9 +21,9 @@ export class ManagerService {
     private readonly userService: UserService,
   ) {}
 
-  async getCarsWithStatusNotActive(): Promise<CarResponseDto[]> {
-    return await this.carRepository.findBy({ status: ECarStatus.NOT_ACTIVE });
-  }
+  // async getCarsWithStatusNotActive(): Promise<CarResponseDto[]> {
+  //   return await this.carRepository.findBy({ status: ECarStatus.NOT_ACTIVE });
+  // }
 
   public async blockUser(userId: string): Promise<void> {
     const userToBlock = await this.userService.getUserById(userId);
@@ -76,6 +76,4 @@ export class ManagerService {
     }
     return user;
   }
-
-  // async approvePremiumForUser(userId: string): Promise<void> {}
 }

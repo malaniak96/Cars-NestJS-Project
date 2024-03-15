@@ -5,7 +5,7 @@ export class ICar {
   year: number;
   price: number;
   model: { model: string };
-  brand: { brand: string };
+  marka: { marka: string };
   currency: ECurrency;
   description: string;
   photo: string;

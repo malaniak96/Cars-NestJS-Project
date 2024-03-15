@@ -27,13 +27,13 @@ import { RoleGuard } from '../../common/guards/roles.guard';
 export class ManagerController {
   constructor(private readonly managerService: ManagerService) {}
 
-  @ApiOperation({
-    summary: 'Get all cars with status NOT ACTIVE',
-  })
-  @Get()
-  async getCarsWithStatusNotActive(): Promise<CarResponseDto[]> {
-    return await this.managerService.getCarsWithStatusNotActive();
-  }
+  // @ApiOperation({
+  //   summary: 'Get all cars with status NOT ACTIVE',
+  // })
+  // @Get()
+  // async getCarsWithStatusNotActive(): Promise<CarResponseDto[]> {
+  //   return await this.managerService.getCarsWithStatusNotActive();
+  // }
 
   @ApiOperation({ summary: 'Block user' })
   @Patch(':userId')

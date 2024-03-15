@@ -14,8 +14,6 @@ import { IUser } from '../../../interfaces/user.interface';
 import { UserResponseDto } from '../dto/response/user.response.dto';
 import { UserMapper } from './user.mapper';
 import { UserCreateRequestDto } from '../dto/request/create-user.request.dto';
-import { EAccountTypes } from '../enums/account-types.enum';
-import { CreditCardRequestDto } from '../dto/request/credit-card.request.dto';
 import * as bcrypt from 'bcrypt';
 import { DeleteUserDto } from '../dto/request/delete-user.request.dto';
 
@@ -26,6 +24,7 @@ export class UserService {
   public async findAllUsers(): Promise<UserResponseDto[]> {
     return await this.userRepository.find();
   }
+
   public async create(
     @Body() dto: UserCreateRequestDto,
   ): Promise<UserResponseDto> {
@@ -53,6 +52,7 @@ export class UserService {
     const entity = await this.findByIdOrThrowException(userId);
     return UserMapper.toResponseDto(entity);
   }
+
   public async delete(userId: string, deleteDto: DeleteUserDto): Promise<void> {
     const user = await this.findByIdOrThrowException(userId);
     if (!user) {
@@ -81,19 +81,5 @@ export class UserService {
       );
     }
     return user;
-  }
-
-  public async upgradeToPremium(
-    user: IUser,
-    creditCardInfo: CreditCardRequestDto,
-  ): Promise<void> {
-    if (!creditCardInfo) {
-      throw new UnprocessableEntityException(
-        'Please enter your credit card information to upgrade to premium account',
-      );
-    }
-    user.creditCardInfo = creditCardInfo;
-    user.typeAccount = EAccountTypes.PREMIUM;
-    await this.userRepository.save(user);
   }
 }
