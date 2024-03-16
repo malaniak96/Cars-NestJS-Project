@@ -35,5 +35,5 @@ export class UserEntity extends BaseEntity {
   refreshTokens?: RefreshTokenEntity[];
 
   @OneToMany(() => CarEntity, (entity) => entity.user)
-  cars: CarEntity[];
+  cars?: CarEntity[];
 }

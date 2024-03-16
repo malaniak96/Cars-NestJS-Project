@@ -15,7 +15,7 @@ export class UserBaseRequestDto {
   @IsString()
   @IsOptional()
   @Length(0, 50)
-  @Transform(TransformHelper.trim)
+  @Transform(TransformHelper.trimmer)
   @Type(() => String)
   name?: string;
 

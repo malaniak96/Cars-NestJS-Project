@@ -10,6 +10,7 @@ import { RedisService } from '../redis/redis.service';
 import { redisProvider } from '../redis/redis.module';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth/services/auth.service';
+import { Reflector } from '@nestjs/core';
 
 @Module({
   imports: [],

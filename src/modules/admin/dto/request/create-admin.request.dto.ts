@@ -16,7 +16,7 @@ export class CreateAdminRequestDto {
   @IsString()
   @IsOptional()
   @Length(3, 50)
-  @Transform(TransformHelper.trim)
+  @Transform(TransformHelper.trimmer)
   @Type(() => String)
   name?: string;
 
@@ -49,8 +49,4 @@ export class CreateAdminRequestDto {
   @IsNotEmpty()
   @IsString()
   deviceId: string;
-
-  @Exclude()
-  @IsOptional()
-  creditCardInfo?: boolean;
 }

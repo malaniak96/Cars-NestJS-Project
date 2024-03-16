@@ -22,10 +22,9 @@ import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
 import { RoleGuard } from '../../common/guards/roles.guard';
 import { DeleteUserDto } from './dto/request/delete-user.request.dto';
 import { AccountTypeChangeRequestDto } from './dto/request/account-type-change.request.dto';
+import { UserEntity } from '../../database/entities/user.entity';
 
 @ApiTags('Users')
-@Roles(ERole.ADMIN, ERole.MANAGER)
-@UseGuards(RoleGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -47,7 +46,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER)
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER, ERole.ADMIN, ERole.MANAGER)
   @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Update user' })
   @Patch(':userId')
@@ -58,19 +57,27 @@ export class UserController {
     return await this.userService.updateUser(userData, dto);
   }
 
-  @ApiBearerAuth()
-  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER)
-  @UseGuards(RoleGuard)
+  // @ApiBearerAuth()
+  // @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER)
+  // @UseGuards(RoleGuard)
+  // @ApiOperation({ summary: 'Get user by Id' })
+  // @Get(':userId')
+  // public async getUserById(
+  //   @Param('userId', ParseUUIDPipe) userId: string,
+  // ): Promise<UserResponseDto> {
+  //   return await this.userService.getUserById(userId);
+  // }
+  @SkipAuth()
   @ApiOperation({ summary: 'Get user by Id' })
   @Get(':userId')
-  public async getUserById(
-    @Param('userId', ParseUUIDPipe) userId: string,
-  ): Promise<UserResponseDto> {
-    return await this.userService.getUserById(userId);
+  public async getUserByIdWithCars(
+    @Param('userId') userId: string,
+  ): Promise<UserEntity> {
+    return this.userService.getUserByIdWithCars(userId);
   }
 
   @ApiBearerAuth()
-  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER)
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER, ERole.ADMIN, ERole.MANAGER)
   @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Delete user by Id' })
   @Delete(':userId')
@@ -82,7 +89,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER)
+  @Roles(ERole.BUYER, ERole.SELLER, ERole.DEALER, ERole.ADMIN, ERole.MANAGER)
   @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Upgrade Account Type from Basic to Premium' })
   @Patch('upgrade-to-premium:userId')

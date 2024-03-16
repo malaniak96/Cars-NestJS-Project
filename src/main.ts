@@ -9,7 +9,7 @@ import { AppConfig, Config } from './configs/configs.type';
 import { AppModule } from './modules/app.module';
 import { SwaggerHelper } from './common/helpers/swagger.helper';
 import { AdminService } from './modules/admin/services/admin.service';
-import { AdminDto } from './modules/admin/dto/admin.dto';
+import { Admin } from './modules/admin/constants/admin';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -41,7 +41,7 @@ async function bootstrap() {
     if (existingAdmin) {
       new Logger().log('Admin account already exists');
     } else {
-      await adminService.createAdmin(AdminDto);
+      await adminService.createAdmin(Admin);
       new Logger().log('ROOT ADMIN was successfully created');
     }
   } catch (error) {

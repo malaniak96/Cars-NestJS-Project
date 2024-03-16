@@ -48,15 +48,21 @@ export class UserService {
     return UserMapper.toResponseDto(updatedUser);
   }
 
-  public async getUserById(userId: string): Promise<UserResponseDto> {
-    const entity = await this.findByIdOrThrowException(userId);
-    return UserMapper.toResponseDto(entity);
+  // public async getUserById(userId: string): Promise<UserResponseDto> {
+  //   const entity = await this.findByIdOrThrowException(userId);
+  //   return UserMapper.toResponseDto(entity);
+  // }
+  public async getUserByIdWithCars(userId: string): Promise<UserEntity> {
+    await this.findByIdOrThrowException(userId);
+    return await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { cars: true },
+    });
   }
-
   public async delete(userId: string, deleteDto: DeleteUserDto): Promise<void> {
     const user = await this.findByIdOrThrowException(userId);
     if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User with id: ${userId} not found`);
     }
 
     const passwordMatches = await bcrypt.compare(

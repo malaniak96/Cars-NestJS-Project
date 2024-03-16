@@ -15,7 +15,7 @@ import { ManagerService } from './services/manager.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles';
 import { ERole } from '../../common/enums/role.enum';
-import { CarResponseDto } from '../car/dto/response/car.response.dto';
+import { CarAdsResponseDto } from '../car/dto/response/car-ads.response.dto';
 import { UserResponseDto } from '../user/dto/response/user.response.dto';
 import { RoleGuard } from '../../common/guards/roles.guard';
 
@@ -27,15 +27,31 @@ import { RoleGuard } from '../../common/guards/roles.guard';
 export class ManagerController {
   constructor(private readonly managerService: ManagerService) {}
 
-  // @ApiOperation({
-  //   summary: 'Get all cars with status NOT ACTIVE',
-  // })
-  // @Get()
-  // async getCarsWithStatusNotActive(): Promise<CarResponseDto[]> {
-  //   return await this.managerService.getCarsWithStatusNotActive();
-  // }
+  @ApiOperation({
+    summary: 'Get cars with status NOT ACTIVE',
+  })
+  @Get()
+  public async getCarAdsWithStatusNotActive(): Promise<CarAdsResponseDto[]> {
+    return await this.managerService.getCarAdsWithStatusNotActive();
+  }
+  @ApiOperation({ summary: 'Delete INACTIVE car by id' })
+  @Delete(':carId')
+  public async deleteInactiveCarById(
+    @Param('carId') carId: string,
+  ): Promise<void> {
+    await this.managerService.deleteInactiveCarById(carId);
+  }
+  @ApiOperation({
+    summary: 'Get user by id with status BLOCKED',
+  })
+  @Get(':userId')
+  public async getUserWithStatusBlocked(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<UserResponseDto> {
+    return await this.managerService.getUserWithStatusBlocked(userId);
+  }
 
-  @ApiOperation({ summary: 'Block user' })
+  @ApiOperation({ summary: 'BLOCK user' })
   @Patch(':userId')
   public async blockUser(
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -43,17 +59,7 @@ export class ManagerController {
     return await this.managerService.blockUser(userId);
   }
 
-  @ApiOperation({
-    summary: 'Get user by id with status blocked',
-  })
-  @Get(':userId')
-  async getUserWithStatusBlocked(
-    @Param('userId', ParseUUIDPipe) userId: string,
-  ): Promise<UserResponseDto> {
-    return await this.managerService.getUserWithStatusBlocked(userId);
-  }
-
-  @ApiOperation({ summary: 'Unblock user' })
+  @ApiOperation({ summary: 'UNBLOCK user' })
   @Put(':userId')
   async unblockUser(
     @Param('userId', ParseUUIDPipe) userId: string,
@@ -62,20 +68,11 @@ export class ManagerController {
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete user by id' })
+  @ApiOperation({ summary: 'DELETE user by id' })
   @Delete(':userId')
   async deleteUserById(
     @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<void> {
     await this.managerService.deleteUser(userId);
   }
-
-  // @ApiOperation({
-  //   summary: 'Approve PREMIUM account for the user',
-  // })
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // @Post(':userId')
-  // async approvePremiumForUser(@Param('userId', ParseUUIDPipe) userId: string): Promise<void> {
-  //   await this.managerService.approvePremiumForUser(userId);
-  // }
 }

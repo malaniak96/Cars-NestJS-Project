@@ -38,7 +38,7 @@ export class RoleGuard implements CanActivate {
     Logger.log(accessToken, 'accessToken');
 
     if (!accessToken) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Access token not found');
     }
     const payload = await this.tokenService.verifyToken(
       accessToken,

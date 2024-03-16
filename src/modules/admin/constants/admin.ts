@@ -1,7 +1,7 @@
 import { ERole } from '../../../common/enums/role.enum';
 import { EAccountTypes } from '../../user/enums/account-types.enum';
 
-export const AdminDto = {
+export const Admin = {
   name: '',
   userName: 'Admin',
   email: 'admin@car-market.com',
