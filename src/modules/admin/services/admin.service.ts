@@ -29,20 +29,6 @@ export class AdminService {
     return await this.authService.signUp(dto);
   }
 
-  // public async createManager(
-  //   @Body() dto: UserCreateRequestDto,
-  // ): Promise<UserResponseDto> {
-  //   const findUser = await this.userRepository.findOneBy({ email: dto.email });
-  //   if (findUser) {
-  //     throw new BadRequestException('User already exists');
-  //   }
-  //   const newUser = this.userRepository.create(dto);
-  //
-  //   return this.userRepository.save(newUser);
-  // }
-  // public deleteManager(id: number) {
-  //   return `This action removes a #${id} admin`;
-  // }
   public async deleteManager(userId: string): Promise<void> {
     const userEntity = await this.findByIdOrThrowException(userId);
     await this.userRepository.remove(userEntity);

@@ -23,8 +23,6 @@ import { RoleGuard } from '../../common/guards/roles.guard';
 import { DeleteUserDto } from './dto/request/delete-user.request.dto';
 import { AccountTypeChangeRequestDto } from './dto/request/account-type-change.request.dto';
 
-@Roles(ERole.ADMIN)
-@UseGuards(RoleGuard)
 @ApiTags('Users')
 @Controller('user')
 export class UserController {

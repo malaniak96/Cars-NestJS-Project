@@ -25,7 +25,6 @@ export class BrandController {
     return await this.carBrandsService.getAllModels();
   }
 
-  @SkipAuth()
   @ApiBearerAuth()
   @Roles(ERole.ADMIN, ERole.MANAGER)
   @UseGuards(RoleGuard)
