@@ -15,4 +15,10 @@ export class TransformHelper {
   public static trimUpperCase({ value }) {
     return value.trim().toUpperCase();
   }
+
+  public static trimArray({ value }) {
+    return value && Array.isArray(value)
+      ? value.map((item) => item.trim())
+      : value;
+  }
 }

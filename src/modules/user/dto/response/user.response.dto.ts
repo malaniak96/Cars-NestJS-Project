@@ -25,5 +25,5 @@ export class UserDetailsResponseDto {
   created: Date;
   updated: Date;
   blocked: boolean;
-  cars?: CarsAdsListResponseDto[];
+  cars: CarsAdsListResponseDto[];
 }

@@ -3,7 +3,6 @@ import {
   CanActivate,
   ExecutionContext,
   UnauthorizedException,
-  Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles';
@@ -27,15 +26,11 @@ export class RoleGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    Logger.log(roles, 'roles');
     if (!roles) return true;
-    Logger.log(roles, 'roles');
 
     const request = context.switchToHttp().getRequest();
 
     const accessToken = request.get('Authorization')?.split('Bearer ')[1];
-
-    Logger.log(accessToken, 'accessToken');
 
     if (!accessToken) {
       throw new UnauthorizedException('Access token not found');
@@ -44,8 +39,6 @@ export class RoleGuard implements CanActivate {
       accessToken,
       TokenType.ACCESS,
     );
-
-    Logger.log(payload, 'payload');
     if (!payload) {
       throw new UnauthorizedException();
     }
@@ -62,7 +55,6 @@ export class RoleGuard implements CanActivate {
     const user = await this.userRepository.findOneBy({
       id: payload.userId,
     });
-    Logger.log(payload.userId, 'user');
     if (!user) {
       throw new UnauthorizedException();
     }

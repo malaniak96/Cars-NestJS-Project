@@ -11,10 +11,7 @@ import { AdminModule } from './admin/admin.module';
 import { ManagerModule } from './manager/manager.module';
 import { RepositoryModule } from './repositories/repository.module';
 import { HttpModule } from '@nestjs/axios';
-import { APP_GUARD } from '@nestjs/core';
-import { RoleGuard } from '../common/guards/roles.guard';
-import { AccountTypeGuard } from '../common/guards/account-type.guard';
-import { CarDetailsModule } from './car-details/car-details.module';
+import { CarBrandsModule } from './car-brands/car-brands.module';
 
 @Module({
   imports: [
@@ -27,23 +24,14 @@ import { CarDetailsModule } from './car-details/car-details.module';
     }),
     AuthModule,
     UserModule,
-    CarAdsModule,
-    CarDetailsModule,
     AdminModule,
     ManagerModule,
+    CarAdsModule,
+    CarBrandsModule,
     HealthModule,
     RepositoryModule,
   ],
   controllers: [],
-  providers: [
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RoleGuard,
-    // },
-    // {
-    //   provide: 'ACCOUNT_TYPE_GUARD',
-    //   useClass: AccountTypeGuard,
-    // },
-  ],
+  providers: [],
 })
 export class AppModule {}

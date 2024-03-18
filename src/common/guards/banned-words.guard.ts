@@ -10,8 +10,7 @@ import { bannedWords } from '../constants/bannedwords';
 export class BannedWordsGuard implements CanActivate {
   private numberOfEditAttempts = 1;
   private readonly maxNumberOfEditAttempts = 3;
-  constructor() {}
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
     const description = request.body.description;
@@ -28,7 +27,6 @@ export class BannedWordsGuard implements CanActivate {
       bannedWords,
     );
     if (containsBannedWords) {
-      // Increment the edit attempt counter if bad words are found
       this.numberOfEditAttempts++;
       throw new BadRequestException(
         'The description or title contains invalid words',
@@ -47,9 +45,9 @@ export class BannedWordsGuard implements CanActivate {
     }
     for (const word of bannedWords) {
       if (description.includes(word) || title.includes(word)) {
-        return true; // Bad word found
+        return true;
       }
     }
-    return false; // No bad words found
+    return false;
   }
 }

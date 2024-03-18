@@ -20,11 +20,9 @@ import { DeleteUserDto } from '../dto/request/delete-user.request.dto';
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
-
   public async findAllUsers(): Promise<UserResponseDto[]> {
     return await this.userRepository.find();
   }
-
   public async create(
     @Body() dto: UserCreateRequestDto,
   ): Promise<UserResponseDto> {
@@ -33,7 +31,6 @@ export class UserService {
       throw new BadRequestException('User already exists');
     }
     const newUser = this.userRepository.create(dto);
-
     return this.userRepository.save(newUser);
   }
 
@@ -41,18 +38,18 @@ export class UserService {
     userData: IUser,
     dto: UserUpdateRequestDto,
   ): Promise<UserResponseDto> {
-    const entity = await this.userRepository.findOneBy({ id: userData.userId });
-
+    const entity = await this.userRepository.findOneBy({
+      id: userData.userId,
+    });
     const updatedUser = await this.userRepository.save({ ...entity, ...dto });
-
     return UserMapper.toResponseDto(updatedUser);
   }
 
-  // public async getUserById(userId: string): Promise<UserResponseDto> {
-  //   const entity = await this.findByIdOrThrowException(userId);
-  //   return UserMapper.toResponseDto(entity);
-  // }
-  public async getUserByIdWithCars(userId: string): Promise<UserEntity> {
+  public async getUserById(userId: string): Promise<UserResponseDto> {
+    const entity = await this.findByIdOrThrowException(userId);
+    return UserMapper.toResponseDto(entity);
+  }
+  public async getUserByIdWithCars(userId: string): Promise<UserResponseDto> {
     await this.findByIdOrThrowException(userId);
     return await this.userRepository.findOne({
       where: { id: userId },
@@ -73,9 +70,7 @@ export class UserService {
     if (!passwordMatches) {
       throw new UnauthorizedException('Invalid password');
     }
-
     await this.userRepository.remove(user);
-
     new Logger().log(`User with id: ${userId} has been successfully deleted`);
   }
 

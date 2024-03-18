@@ -1,9 +1,4 @@
-import {
-  Body,
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Body, Injectable, UnprocessableEntityException } from '@nestjs/common';
 
 import { CreateManagerRequestDto } from '../../manager/dto/request/create-manager.request.dto';
 import { CreateAdminRequestDto } from '../dto/request/create-admin.request.dto';
@@ -11,8 +6,6 @@ import { AuthService } from '../../auth/services/auth.service';
 import { AuthUserResponseDto } from '../../auth/dto/response/auth-user.response.dto';
 import { UserRepository } from '../../repositories/services/user.repository';
 import { UserEntity } from '../../../database/entities/user.entity';
-import { AdminResponseDto } from '../dto/response/admin.response.dto';
-import { ERole } from '../../../common/enums/role.enum';
 
 @Injectable()
 export class AdminService {
@@ -26,15 +19,8 @@ export class AdminService {
   ): Promise<AuthUserResponseDto> {
     return await this.authService.signUp(admin);
   }
-
-  async getAdmin(): Promise<AdminResponseDto> {
-    const admin = await this.userRepository.findOneOrFail({
-      where: { role: ERole.ADMIN },
-    });
-    if (!admin) {
-      throw new NotFoundException('Admin not found');
-    }
-    return admin;
+  public async getAdmin(email: string): Promise<UserEntity> {
+    return await this.userRepository.findOneBy({ email });
   }
 
   public async createManager(

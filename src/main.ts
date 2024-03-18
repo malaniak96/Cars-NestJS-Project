@@ -37,7 +37,7 @@ async function bootstrap() {
 
   const adminService = app.get<AdminService>(AdminService);
   try {
-    const existingAdmin = await adminService.getAdmin();
+    const existingAdmin = await adminService.getAdmin(Admin.email);
     if (existingAdmin) {
       new Logger().log('Admin account already exists');
     } else {

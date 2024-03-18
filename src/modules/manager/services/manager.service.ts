@@ -13,6 +13,7 @@ import { UserService } from '../../user/services/user.service';
 import { UserResponseDto } from '../../user/dto/response/user.response.dto';
 import { UserMapper } from '../../user/services/user.mapper';
 import { UserEntity } from '../../../database/entities/user.entity';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class ManagerService {
@@ -37,7 +38,14 @@ export class ManagerService {
     await this.carRepository.remove(car);
   }
   public async blockUser(userId: string): Promise<void> {
-    const userToBlock = await this.userService.getUserByIdWithCars(userId);
+    const userToBlockResponse: UserResponseDto =
+      await this.userService.getUserById(userId);
+
+    // Convert UserResponseDto to UserEntity
+    const userToBlock: UserEntity = plainToClass(
+      UserEntity,
+      userToBlockResponse,
+    );
 
     if (userToBlock.role === 'admin' || userToBlock.role === 'manager') {
       throw new ConflictException('Managers and admins cannot be blocked');
@@ -53,8 +61,13 @@ export class ManagerService {
   }
 
   async unblockUser(userId: string): Promise<void> {
-    const userToBeUnblocked =
+    const userToBeUnblockedResponse =
       await this.userService.getUserByIdWithCars(userId);
+
+    const userToBeUnblocked: UserEntity = plainToClass(
+      UserEntity,
+      userToBeUnblockedResponse,
+    );
 
     if (!userToBeUnblocked.blocked) {
       throw new ConflictException('User has been already unblocked');

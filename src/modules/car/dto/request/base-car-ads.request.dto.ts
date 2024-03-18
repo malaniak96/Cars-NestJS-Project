@@ -38,7 +38,7 @@ export class BaseCarAdsRequestDto {
   currency: ECurrency;
 
   @IsString()
-  @Transform(TransformHelper.trim)
+  @Transform(TransformHelper.trimmer)
   @Length(2, 30)
   marka: string;
 

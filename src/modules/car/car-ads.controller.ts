@@ -19,10 +19,12 @@ import { ERole } from '../../common/enums/role.enum';
 import { Roles } from '../../common/decorators/roles';
 import { RoleGuard } from '../../common/guards/roles.guard';
 import { SkipAuth } from '../auth/decorators/skip-auth.decorator';
-import { CurrencyService } from './services/currency.service';
 import { CreateCarAdsRequestDto } from './dto/request/create-car-ads.request.dto';
 import { IUser } from '../../interfaces/user.interface';
-import { CarAdsResponseDto } from './dto/response/car-ads.response.dto';
+import {
+  CarAdPremiumResponseDto,
+  CarAdsResponseDto,
+} from './dto/response/car-ads.response.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 import {
@@ -32,18 +34,18 @@ import {
 import { BannedWordsGuard } from '../../common/guards/banned-words.guard';
 import { CarsAdsListRequestDto } from './dto/request/car-ads-list.request.dto';
 import { CarsAdsListResponseDto } from './dto/response/car-ads-list.response.dto';
+import { PremiumAccountGuard } from '../../common/guards/premium-account.guard';
+import { BasicAccountSellingLimitsGuard } from '../../common/guards/basic-account-selling-limits.guard';
+import { ERegion } from './enums/region.enum';
 
 @ApiTags('Cars')
 @Controller('cars')
 export class CarAdsController {
-  constructor(
-    private readonly carService: CarAdsService,
-    private readonly currencyService: CurrencyService,
-  ) {}
+  constructor(private readonly carService: CarAdsService) {}
 
   @ApiBearerAuth()
-  @Roles(ERole.SELLER, ERole.MANAGER, ERole.ADMIN)
-  @UseGuards(RoleGuard, BannedWordsGuard)
+  @Roles(ERole.SELLER, ERole.DEALER, ERole.MANAGER, ERole.ADMIN)
+  @UseGuards(RoleGuard, BannedWordsGuard, BasicAccountSellingLimitsGuard)
   @ApiOperation({ summary: 'Create Car Advertisement' })
   @Post()
   public async createCarAdvertisement(
@@ -62,26 +64,19 @@ export class CarAdsController {
     return await this.carService.findAllCarAdvertisements(query);
   }
 
-  @SkipAuth()
-  @ApiOperation({ summary: 'Get Car Advertisement by Car Id' })
+  @ApiBearerAuth()
+  @Roles(ERole.SELLER, ERole.BUYER, ERole.DEALER, ERole.MANAGER, ERole.ADMIN)
+  @UseGuards(RoleGuard, PremiumAccountGuard)
+  @ApiOperation({
+    summary:
+      'Get Advanced Details about Car Advertisement. Only PREMIUM ACCOUNT USERS',
+  })
   @Get(':carId')
   public async getCarAdvertisementById(
     @Param('carId', ParseUUIDPipe) carId: string,
-  ): Promise<CarAdsResponseDto> {
-    return await this.carService.getCarAdvertisementById(carId);
-  }
-
-  @ApiBearerAuth()
-  @Roles(ERole.SELLER, ERole.MANAGER, ERole.ADMIN)
-  @UseGuards(RoleGuard)
-  @ApiOperation({ summary: 'See all of my Car Advertisements' })
-  @Get('my-cars')
-  public async findMyCarAdvertisements(
-    // @Param('userId') userId: string,
-    @Query() query: CarsAdsListRequestDto,
-    @CurrentUser() user: IUser,
-  ): Promise<CarsAdsListResponseDto> {
-    return await this.carService.findMyCarAdvertisements(query, user);
+    region: ERegion,
+  ): Promise<CarAdPremiumResponseDto> {
+    return await this.carService.getCarAdByIdPremium(carId, region);
   }
   @ApiBearerAuth()
   @Roles(ERole.SELLER, ERole.MANAGER, ERole.ADMIN)
@@ -96,7 +91,7 @@ export class CarAdsController {
     return await this.carService.changeCarStatus(carId, user, dto);
   }
   @ApiBearerAuth()
-  @Roles(ERole.SELLER, ERole.MANAGER, ERole.ADMIN)
+  @Roles(ERole.SELLER, ERole.ADMIN)
   @UseGuards(RoleGuard)
   @ApiOperation({ summary: 'Edit my Car Advertisement by Car Id' })
   @Patch(':carId')
@@ -119,13 +114,5 @@ export class CarAdsController {
     @CurrentUser() user: IUser,
   ): Promise<void> {
     await this.carService.deleteMyCarAdvertisementById(carId, user);
-  }
-  @SkipAuth()
-  @Get('convert-price')
-  async convertPrice(
-    @Query('price') amount: number,
-    @Query('currency') currency: string,
-  ): Promise<string> {
-    return await this.currencyService.convertCurrency(amount, currency);
   }
 }

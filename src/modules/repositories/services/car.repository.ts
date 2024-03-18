@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { CarEntity } from '../../../database/entities/car.entity';
 
@@ -11,7 +11,6 @@ export class CarRepository extends Repository<CarEntity> {
   constructor(private readonly dataSource: DataSource) {
     super(CarEntity, dataSource.manager);
   }
-
   public async findAllCarAdvertisements(
     query: CarsAdsListRequestDto,
   ): Promise<[CarEntity[], number]> {
@@ -58,19 +57,29 @@ export class CarRepository extends Repository<CarEntity> {
     queryBuilder.leftJoinAndSelect('car.region', 'region');
 
     queryBuilder.where('car.id = :carId', { carId });
-    // queryBuilder.addOrderBy('cars.created', 'DESC');
-    // queryBuilder.take(query.limit);
-    // queryBuilder.skip(query.offset);
     return await queryBuilder.getMany();
   }
 
-  public async getCarByRegion(region: ERegion): Promise<CarEntity[]> {
+  public async getCarsByRegion(region: ERegion): Promise<CarEntity[]> {
     const cars = await this.find({ where: { region } });
 
     if (!cars || cars.length === 0) {
       throw new NotFoundException(`No cars found for region ${region}`);
     }
-
     return cars;
+  }
+  public async getCarsinUkraine(): Promise<CarEntity[]> {
+    const cars = await this.find();
+
+    if (!cars || cars.length === 0) {
+      throw new NotFoundException(`No cars found`);
+    }
+    return cars;
+  }
+
+  public async getAdvertisementCountForUser(userId: string): Promise<number> {
+    return await this.createQueryBuilder('car')
+      .where('car.user_id = :userId', { userId })
+      .getCount();
   }
 }
